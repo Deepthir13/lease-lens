@@ -1,0 +1,75 @@
+CALIFORNIA CIVIL CODE — DIVISION 3, PART 4, TITLE 5, CHAPTER 2
+HIRING OF REAL PROPERTY (§§ 1940–1954.1)
+Source: California Legislature — https://leginfo.legislature.ca.gov
+Note: Pre-saved fallback; the live site uses server-side rendering. Verify text at leginfo.legislature.ca.gov.
+
+§ 1940. Applicability of chapter.
+(a) Except as provided in subdivision (b), this chapter shall apply to all persons who hire dwelling units located within this state including tenants, lessees, boarders, lodgers, and others, however denominated.
+(b) The chapter shall not apply to transient occupancy of hotels and motels; to occupancy under a contract of sale of a dwelling unit or the property of which it is a part; to occupancy by an employee whose right to occupancy is conditional upon employment; or to occupancy by a member of a fraternal, social, or recreational organization that is incidental to membership.
+
+§ 1940.05. Termination of tenancy; written notice; limitation on grounds (effective January 1, 2025).
+(a) Except as provided in subdivision (b), a landlord shall not terminate a tenancy for a no-fault just cause reason unless the landlord provides the tenant with written notice to terminate the tenancy at least 90 days prior to the proposed date of termination.
+
+§ 1941. Landlord's duty to put and maintain premises in habitable condition.
+The lessor of a building intended for the occupation of human beings must, in the absence of an agreement to the contrary, put it into a condition fit for such occupation, and repair all subsequent dilapidations thereof, which render it untenantable.
+
+§ 1941.1. Conditions rendering residential premises untenantable.
+A dwelling shall be deemed untenantable for the purposes of Section 1941 if it substantially lacks any of the following affirmative standard characteristics:
+(a) Effective waterproofing and weather protection of roof and exterior walls, including unbroken windows and doors.
+(b) Plumbing or gas facilities in good working order.
+(c) A water supply approved under applicable law that is under the control of the tenant, capable of producing hot and cold running water, or a system that is under the control of the landlord, that produces hot and cold running water, furnished to appropriate fixtures, and connected to a sewage disposal system approved under applicable law.
+(d) Heating facilities in good working order.
+(e) Electrical lighting, with wiring and electrical equipment in good working order.
+(f) Building, grounds, and appurtenances at the time of the commencement of the lease or rental agreement in every part clean, sanitary, and free from all accumulations of debris, filth, rubbish, garbage, rodents, and vermin.
+(g) An adequate number of appropriate receptacles for garbage and rubbish, in clean condition and good repair at the time of the commencement of the lease or rental agreement.
+(h) Floors, stairways, and railings maintained in good repair.
+
+§ 1942. Tenant's remedy for untenantable premises; abandonment or repair and deduct.
+(a) If within a reasonable time after written or oral notice to the landlord or his agent, the lessor neglects to do so, the tenant may repair the same himself where the cost of such repairs does not exceed one month's rent of the premises, and deduct the expenses of such repairs from the rent.
+(b) A tenant may not repair and deduct under subdivision (a) more than twice in any 12-month period.
+
+§ 1942.4. Conditions warranting rent withholding; notice requirements.
+(a) A landlord of a dwelling may not demand rent, collect rent, issue a notice of a rent increase, or issue a three-day notice to pay rent or quit pursuant to subdivision (2) of Section 1161 of the Code of Civil Procedure, if all of the following conditions exist prior to the landlord's demand or notice:
+(1) The dwelling substantially lacks any of the affirmative standard characteristics listed in Section 1941.1 or violates Section 17920.10 of the Health and Safety Code, or is deemed and declared substandard pursuant to Section 17920.3 of the Health and Safety Code.
+(2) A public officer or employee who is responsible for the enforcement of any housing law has notified the landlord in writing of his or her obligation to repair the substandard conditions.
+(3) The conditions have existed and have not been abated 35 days beyond the date of service of that notice.
+
+§ 1942.5. Prohibition of retaliatory eviction.
+(a) If the lessor retaliates against the lessee because of the exercise by the lessee of his or her rights under this chapter or because of his or her complaint to an appropriate agency as to tenantability of a dwelling, the lessor may not recover possession of a dwelling in any action or proceeding, demand an increase in rent, or decrease any services within 180 days of any of the following:
+(1) After the date upon which the lessee, in good faith, has given notice pursuant to Section 1942, has provided notice of a complaint, or has filed a complaint.
+(2) After the date upon which the lessee has paid the rent pursuant to a notice under Section 1942.1.
+
+§ 1945. Holding over; renewal.
+If a lessee of real property remains in possession thereof after the expiration of the hiring, and the lessor accepts rent from him, the parties are presumed to have renewed the hiring on the same terms and for the same time, not exceeding one month when the rent is payable monthly.
+
+§ 1946. Notice to terminate periodic tenancy.
+A hiring of real property, for a term not specified by the parties, is deemed to be renewed as stated in Section 1945 at the end of each term implied by law, unless one of the parties gives written notice to the other of his or her intention to terminate the same, at least as long before the expiration thereof as the term of the hiring itself, not exceeding 30 days. Notice by a tenant shall be given in writing. A tenant giving notice pursuant to this section shall give notice for a period at least as long as the term of the periodic tenancy prior to the proposed termination date.
+
+§ 1946.1. Notices; month-to-month tenancies; 60-day notice for certain tenancies.
+(a) Notwithstanding Section 1946, a hiring of residential real property for a term not specified by the parties, is deemed to be renewed as stated in Section 1945 at the end of each term implied by law, unless one of the parties gives written notice to the other of his or her intention to terminate the same, at least as long before the expiration thereof as the term of the hiring itself, not exceeding 30 days; notice by a tenant shall be given in the manner prescribed in Section 1162 of the Code of Civil Procedure or by sending a copy by certified or registered mail addressed to the lessor.
+(b) Notwithstanding subdivision (a), a tenant giving notice pursuant to this section shall give notice for a period of at least 30 days prior to the proposed termination date.
+(c) Notwithstanding subdivisions (a) and (b), an owner of a residential dwelling giving notice pursuant to this section shall give notice for a period of at least 60 days prior to the proposed termination date if any tenant or resident has continuously and lawfully occupied the residential dwelling for 12 months or more.
+
+§ 1950.5. Security deposits.
+(a) This section applies to security for a rental agreement for residential property that is used as the dwelling of the tenant.
+(b) As used in this section, "security" means any payment, fee, deposit, or charge, including but not limited to any payment, fee, deposit, or charge specified in Section 1940.5, that is imposed at the beginning of the tenancy to be used to reimburse the landlord for costs associated with processing a new tenant or that is to be applied to the rent for the last rental period of a tenancy, or that is imposed as an advance payment of rent, used or to be used for any purpose, including, but not limited to, any of the following:
+(1) The compensation of a landlord for a tenant's default in the payment of rent.
+(2) The repair of damages to the premises, exclusive of ordinary wear and tear, caused by the tenant or by a guest or licensee of the tenant.
+(3) The cleaning of the premises upon termination of the tenancy necessary to return the unit to the same level of cleanliness it was in at the inception of the tenancy.
+(c) For a tenancy commencing or renewed on or after July 1, 2003, an owner of residential property may not demand or receive security, however denominated, in an amount or value in excess of an amount equal to two months' rent, in the case of unfurnished residential property, and an amount equal to three months' rent, in the case of furnished residential property.
+(d) Any security shall be held by the landlord for the tenant who is party to the lease or agreement. The landlord may claim from the security only those amounts as are reasonably necessary for the following purposes:
+(1) The compensation of a landlord for a tenant's default in the payment of rent.
+(2) The repair of damages to the premises, exclusive of ordinary wear and tear, caused by the tenant or by a guest or licensee of the tenant.
+(3) The cleaning of the premises upon termination of the tenancy.
+(e) Within 21 days after the tenant has vacated the premises, the landlord shall furnish the tenant, by personal delivery or by first-class mail, postage prepaid, a copy of an itemized statement indicating the basis for, and the amount of, any security received and the disposition of the security, and shall return any remaining portion of the security to the tenant.
+
+§ 1954. Right of entry of landlord.
+(a) A landlord may enter the dwelling unit only in the following cases:
+(1) In case of emergency.
+(2) To make necessary or agreed repairs, decorations, alterations or improvements, supply necessary or agreed services, or exhibit the dwelling unit to prospective or actual purchasers, mortgagees, tenants, workers, or contractors or to make an inspection pursuant to subdivision (f) of Section 1950.5.
+(3) When the tenant has abandoned or surrendered the premises.
+(4) Pursuant to court order.
+(b) Except in cases of emergency or when the tenant has abandoned or surrendered the premises, entry may not be made during other than normal business hours unless the tenant consents to entry at the time of entry.
+(c) The landlord may not abuse the right of access or use it to harass the tenant.
+(d)(1) Except as provided in subdivision (e), or as provided in paragraph (2) or (3), the landlord shall give the tenant reasonable notice in writing before entry.
+(2) Reasonable notice for the purpose of this subdivision is notice given at least 24 hours before the entry to allow the tenant a reasonable opportunity to be present. In the absence of an agreement between the landlord and tenant, entry shall not be made between the hours of 8 a.m. and 5 p.m.

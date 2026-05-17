@@ -1,0 +1,75 @@
+NEW YORK REAL PROPERTY LAW — ARTICLE 7: LANDLORD AND TENANT
+(Key sections: RPL § 220–238)
+Source: New York State Legislature — https://www.nysenate.gov/legislation/laws/RPP
+Note: This file is a pre-saved fallback. The live site requires JavaScript / Cloudflare clearance.
+
+§ 220. Liability of tenant holding over.
+If a tenant whose term is longer than one month holds over after the expiration of such term, the landlord may proceed to recover possession of the premises, or may elect to hold such tenant as a tenant from year to year at the same rent.
+
+§ 221. Notice to quit.
+A tenancy from month to month may be terminated by either party upon notice of thirty days or more given prior to the expiration of any term.
+
+§ 223. Liability of lessors for repairs.
+A landlord is not liable to a tenant for repairs unless the lease expressly requires the landlord to make repairs, or the landlord covenants in writing to make repairs. Where the landlord assumes responsibility for repair, failure to perform in a reasonable time renders the landlord liable for damages.
+
+§ 223-a. Lease terminated by failure of landlord to give possession.
+In the absence of an express provision to the contrary, it shall be the duty of the landlord to deliver possession of the premises to the tenant on the commencement date of the lease. If unable to deliver possession, the tenant may terminate the lease upon five days written notice to the landlord and recover any prepaid rent or deposit.
+
+§ 223-b. Retaliation by landlord against tenant.
+No landlord shall serve a notice to quit or commence any action to recover real property or send a notice of rent increase within ninety days after a tenant has (a) complained in good faith to the landlord or a government authority about a defect, (b) taken any action to enforce rights under the lease, or (c) joined a tenants' organization. Violation creates a rebuttable presumption of retaliation.
+
+§ 226-b. Right to sublease.
+A tenant renting a residence in a building with four or more residential units shall have the right to sublease the premises subject to written consent of the landlord, which shall not be unreasonably withheld.
+
+§ 227. Lease terminated by damage to premises.
+Where the demised premises are destroyed or so damaged by fire or other unavoidable casualty as to be untenantable, and the lessee is thereby deprived of their beneficial enjoyment, the lessee may surrender possession and be relieved of rent obligations from the date of surrender.
+
+§ 227-a. Termination of lease by senior citizens or individuals with a disability.
+A residential tenant sixty-two years of age or older, or with a documented disability, may terminate a lease upon sixty days written notice if relocating to a residential care facility, adult care facility, or assisted living facility.
+
+§ 227-c. Lease termination by victims of domestic violence.
+A tenant who is a victim of domestic violence may terminate a lease upon written notice of the basis of the termination, effective thirty days after the next rental payment is due.
+
+§ 228. Termination of tenancy at will.
+A tenancy at will may be terminated by either party upon thirty days notice. The notice must specify a date at which the tenancy will terminate, which must be at least thirty days from the date of the notice.
+
+§ 229. Liability for rent after abandonment.
+If a tenant abandons the premises, the landlord has a duty to mitigate damages by making reasonable efforts to re-let the unit. The tenant remains liable for rent until the unit is re-let or the lease expires, whichever comes first.
+
+§ 230. Right of tenants to form, join, or participate in tenants' organizations.
+Tenants shall have the right to form, join, and participate in the activities of tenant organizations for the purpose of dealing with their landlord concerning the terms and conditions of their tenancy. Landlords shall not interfere with this right.
+
+§ 232-a. Notice to terminate tenancy in New York City.
+A monthly tenant in New York City must receive at least 30 days written notice before a landlord can commence an eviction proceeding, except in cases of non-payment of rent.
+
+§ 232-b. Notice to terminate tenancy outside New York City.
+A monthly tenancy outside New York City may be terminated by either party upon one month's notice to expire on any day of the month.
+
+§ 234. Attorney's fees in actions between landlord and tenant.
+Whenever a lease of residential property contains a clause allowing the landlord to recover attorney's fees in an action arising from the lease, there shall be implied in such lease a covenant by the landlord to pay reasonable attorney's fees to the tenant if the tenant is the prevailing party.
+
+§ 235-b. Warranty of habitability.
+In every written or oral lease or rental agreement for residential premises the landlord or lessor shall be deemed to covenant and warrant that the premises so leased shall be maintained in a habitable condition. This warranty shall not be waived by any provision of the lease. Any tenant may use a breach of this warranty as a defense in an eviction proceeding for non-payment of rent, and may seek a rent abatement in proportion to the loss of use caused by the defect.
+
+§ 235-e. Duty to provide written receipt.
+A landlord shall provide a written receipt to any tenant who pays rent in cash, and upon request, to any tenant paying by check, money order, or electronic payment.
+
+§ 235-f. Occupancy of dwelling units.
+It shall be unlawful for any landlord to restrict occupancy of residential premises to a tenant and the immediate family of the tenant. A tenant may share the premises with immediate family, and one additional occupant and that occupant's minor children, provided the tenant or the tenant's immediate family occupies the premises as their primary residence.
+
+§ 236. Personal property; distress for rent abolished.
+The remedy of distress for rent is hereby abolished; a landlord may not seize a tenant's personal property for unpaid rent.
+
+§ 238. Discrimination in leases.
+No lease shall include any provision that discriminates on the basis of race, creed, color, national origin, sex, age, disability, marital status, or any other protected class under state or local human rights law.
+
+SECURITY DEPOSITS (New York General Obligations Law § 7-101 to 7-109):
+
+§ 7-101. Duty to hold deposits in trust.
+Security deposits for residential rental properties shall be held in trust for the benefit of the tenant. The landlord may not commingle the security deposit with personal funds.
+
+§ 7-103. Duty to place deposits in separate accounts.
+Landlords of buildings with six or more units must deposit all security deposits in a bank account separate from personal and operational funds, and must provide tenants with written notice of the bank name, address, and account number within 30 days of receipt.
+
+§ 7-108. Limitation on security deposit amount; return of deposit.
+For tenancies commencing on or after June 14, 2019, security deposits shall not exceed one month's rent. The landlord must return the deposit (or remainder) with an itemized statement of deductions within fourteen days of the tenant vacating the premises. Failure to comply forfeits the landlord's right to retain any portion of the deposit.
