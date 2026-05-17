@@ -7,7 +7,8 @@ import tempfile
 import pytest
 from reportlab.pdfgen import canvas
 
-from app.ingest import ingest_lease
+from app.ingest import ingest_lease, ingest_state_law
+from app.rag import retrieve_context, format_context, get_retriever
 
 
 # ---------------------------------------------------------------------------
@@ -61,3 +62,80 @@ def test_ingest_idempotent():
     count_first = ingest_lease(str(pdf_path), user_id="pytest_idem")
     count_second = ingest_lease(str(pdf_path), user_id="pytest_idem")
     assert count_first == count_second, "Re-ingesting the same PDF should produce the same chunk count"
+
+
+# ---------------------------------------------------------------------------
+# RAG retrieval tests
+# ---------------------------------------------------------------------------
+
+_RAG_USER_ID = "pytest_rag"
+_RAG_STATE = "CA"
+
+_LEASE_LINES = [
+    "LEASE AGREEMENT — RAG TEST",
+    "Monthly rent is $1,800, due on the 1st of each month.",
+    "A security deposit of $3,600 (two months rent) is required.",
+    "Late fees of $75 apply if rent is not received by the 5th.",
+    "The landlord must give 24-hour notice before entering the unit.",
+    "No smoking is permitted anywhere on the premises.",
+    "Tenant may not sublet without written consent of the landlord.",
+    "The lease term is 12 months commencing February 1, 2025.",
+]
+
+
+@pytest.fixture(scope="module")
+def rag_setup():
+    """Ingest a test lease + CA state law once for all RAG tests."""
+    pdf_path = _make_temp_pdf(_LEASE_LINES)
+    ingest_lease(str(pdf_path), user_id=_RAG_USER_ID)
+    ingest_state_law(_RAG_STATE)
+    return {"user_id": _RAG_USER_ID, "state": _RAG_STATE}
+
+
+def test_retrieve_context_returns_both_sources(rag_setup):
+    """retrieve_context should return non-empty chunks from both lease and state law."""
+    result = retrieve_context(
+        question="What is the security deposit and what are my rights?",
+        user_id=rag_setup["user_id"],
+        state=rag_setup["state"],
+    )
+    assert "lease_chunks" in result
+    assert "law_chunks" in result
+    assert "question" in result
+    assert len(result["lease_chunks"]) > 0, "Expected lease chunks"
+    assert len(result["law_chunks"]) > 0, "Expected state law chunks"
+
+
+def test_retrieve_context_chunk_structure(rag_setup):
+    """Each chunk should be a 3-tuple: (text, page_or_section, score)."""
+    result = retrieve_context(
+        question="late fee notice entry",
+        user_id=rag_setup["user_id"],
+        state=rag_setup["state"],
+    )
+    for chunk in result["lease_chunks"] + result["law_chunks"]:
+        assert len(chunk) == 3, "Each chunk must be a (text, metadata, score) tuple"
+        text, meta, score = chunk
+        assert isinstance(text, str) and len(text) > 0
+        assert isinstance(score, float)
+
+
+def test_format_context_contains_section_headers(rag_setup):
+    """format_context output must include both required section headers."""
+    result = retrieve_context(
+        question="Can my landlord enter without notice?",
+        user_id=rag_setup["user_id"],
+        state=rag_setup["state"],
+    )
+    formatted = format_context(result)
+    assert "FROM YOUR LEASE:" in formatted
+    assert "FROM YOUR STATE LAW:" in formatted
+
+
+def test_get_retriever_returns_dict(rag_setup):
+    """get_retriever should return a dict with 'lease' and 'law' keys."""
+    retrievers = get_retriever(rag_setup["user_id"], rag_setup["state"])
+    assert "lease" in retrievers
+    assert "law" in retrievers
+    assert retrievers["lease"] is not None
+    assert retrievers["law"] is not None
