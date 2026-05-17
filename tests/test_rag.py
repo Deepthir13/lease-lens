@@ -9,6 +9,7 @@ from reportlab.pdfgen import canvas
 
 from app.ingest import ingest_lease, ingest_state_law
 from app.rag import retrieve_context, format_context, get_retriever
+from app.chat import ask, generate_answer, SYSTEM_PROMPT
 
 
 # ---------------------------------------------------------------------------
@@ -139,3 +140,47 @@ def test_get_retriever_returns_dict(rag_setup):
     assert "law" in retrievers
     assert retrievers["lease"] is not None
     assert retrievers["law"] is not None
+
+
+# ---------------------------------------------------------------------------
+# Answer generation tests
+# ---------------------------------------------------------------------------
+
+def test_ask_returns_nonempty_answer(rag_setup):
+    """ask() should return a non-empty answer string grounded in the context."""
+    result = ask(
+        question="What is the late fee policy in my lease?",
+        user_id=rag_setup["user_id"],
+        state=rag_setup["state"],
+    )
+
+    assert "answer" in result
+    assert "lease_sources" in result
+    assert "law_sources" in result
+    assert "question" in result
+
+    assert isinstance(result["answer"], str)
+    assert len(result["answer"]) > 0, "Expected a non-empty answer"
+
+    answer_lower = result["answer"].lower()
+    assert "lease" in answer_lower or "law" in answer_lower, (
+        "Answer should reference 'lease' or 'law'"
+    )
+
+
+def test_ask_response_structure(rag_setup):
+    """ask() sources should be lists of dicts with expected keys."""
+    result = ask(
+        question="Can my landlord enter the unit without notice?",
+        user_id=rag_setup["user_id"],
+        state=rag_setup["state"],
+    )
+    for source in result["lease_sources"]:
+        assert "text" in source and "page" in source
+    for source in result["law_sources"]:
+        assert "text" in source and "section" in source
+
+
+def test_system_prompt_is_string():
+    """SYSTEM_PROMPT must be a non-empty string."""
+    assert isinstance(SYSTEM_PROMPT, str) and len(SYSTEM_PROMPT) > 0
