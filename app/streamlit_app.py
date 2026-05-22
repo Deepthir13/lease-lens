@@ -16,7 +16,14 @@ import streamlit as st
 from app.ingest import ingest_lease, ingest_state_law
 from app.chat import ask
 from app.utils import scan_illegal_clauses, get_state
-from app.documents import generate_deposit_letter, save_letter_pdf, STATE_DEPOSIT_LAW
+from app.documents import (
+    generate_deposit_letter,
+    generate_repair_notice,
+    generate_moveout_checklist,
+    save_letter_pdf,
+    STATE_DEPOSIT_LAW,
+    STATE_HABITABILITY_LAW,
+)
 
 # ---------------------------------------------------------------------------
 # Page config (must be first Streamlit call)
@@ -86,6 +93,9 @@ def _init_state():
         "pending_question": None,
         "letter_text": "",
         "letter_pdf_path": None,
+        "repair_notice_text": "",
+        "repair_notice_pdf_path": None,
+        "checklist_pdf_path": None,
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -214,10 +224,10 @@ with st.sidebar:
 # Main area — three tabs
 # ---------------------------------------------------------------------------
 
-tab_chat, tab_scan, tab_letter = st.tabs([
+tab_chat, tab_scan, tab_docs = st.tabs([
     "💬 Ask your lease",
     "🔎 Scan results",
-    "📬 Demand Letter",
+    "📄 Documents",
 ])
 
 # ── Tab 1: Chat ──────────────────────────────────────────────────────────────
@@ -370,7 +380,7 @@ with tab_scan:
                 with st.expander("Show lease text"):
                     st.markdown(f"_{finding['clause_text'][:400]}_")
 
-                st.caption("➡️ Use the **📬 Demand Letter** tab to generate a deposit demand letter.")
+                st.caption("➡️ Use the **📄 Documents** tab to generate a deposit demand or repair notice.")
 
         st.divider()
         st.caption(
@@ -378,139 +388,273 @@ with tab_scan:
             "Consult a tenant rights attorney to confirm enforceability in your jurisdiction."
         )
 
-# ── Tab 3: Demand Letter ──────────────────────────────────────────────────────
+# ── Tab 3: Documents ─────────────────────────────────────────────────────────
 
-with tab_letter:
-    st.markdown("### 📬 Security Deposit Demand Letter")
+with tab_docs:
+    from datetime import date as _date, timedelta as _td
+
+    st.markdown("### 📄 Legal Document Generator")
     st.markdown(
-        "Generate a formal legal demand letter citing your state's exact statute. "
-        "Fill in your details below, then download the ready-to-send PDF."
+        "Generate state-specific tenant rights documents — each one cites your state's exact statute."
     )
 
-    # Show the state-law summary card for the currently selected state
-    law_info = STATE_DEPOSIT_LAW.get(st.session_state.state, {})
-    if law_info:
-        with st.container(border=True):
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Return deadline", f"{law_info['return_deadline']} days")
-            c2.metric("Max penalty", f"{law_info['penalty']}× deposit")
-            c3.metric("Certified mail?", "Yes" if law_info["certified_mail_required"] else "No")
-            st.caption(f"Governing statute: **{law_info['statute_citation']}**")
+    subtab_deposit, subtab_repair, subtab_checklist = st.tabs([
+        "💰 Deposit Demand",
+        "🔧 Repair Notice",
+        "📋 Move-Out Checklist",
+    ])
 
-    st.divider()
+    # ── Sub-tab 1: Security deposit demand letter ─────────────────────────────
 
-    with st.form("letter_form"):
-        st.markdown("**Your information**")
-        col_t1, col_t2 = st.columns(2)
-        tenant_name = col_t1.text_input("Your full name", placeholder="Jane Smith")
-        tenant_address = col_t2.text_area(
-            "Your current mailing address", height=88,
-            placeholder="456 Oak Ave, Apt 2\nSan Francisco, CA 94102",
+    with subtab_deposit:
+        st.markdown("#### 💰 Security Deposit Demand Letter")
+        st.markdown(
+            "Demand return of your security deposit citing the exact statute for your state."
         )
 
-        st.markdown("**Landlord information**")
-        col_l1, col_l2 = st.columns(2)
-        landlord_name = col_l1.text_input("Landlord / property manager name", placeholder="Pacific Properties LLC")
-        landlord_address = col_l2.text_area(
-            "Landlord mailing address", height=88,
-            placeholder="789 Market St, Suite 100\nSan Francisco, CA 94103",
-        )
+        dep_law = STATE_DEPOSIT_LAW.get(st.session_state.state, {})
+        if dep_law:
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Return deadline", f"{dep_law['return_deadline']} days")
+                c2.metric("Max penalty", f"{dep_law['penalty']}× deposit")
+                c3.metric("Certified mail?", "Yes" if dep_law["certified_mail_required"] else "No")
+                st.caption(f"Governing statute: **{dep_law['statute_citation']}**")
 
-        st.markdown("**Rental details**")
-        property_address = st.text_input(
-            "Rental property address",
-            placeholder="123 Main St, Apt 4B, San Francisco, CA 94101",
-        )
-
-        col_d1, col_d2, col_d3 = st.columns(3)
-        from datetime import date as _date, timedelta as _td
-        move_out_date = col_d1.date_input(
-            "Move-out date",
-            value=_date.today() - _td(days=30),
-        )
-        deposit_amount = col_d2.number_input(
-            "Security deposit ($)",
-            min_value=0.0,
-            step=50.0,
-            format="%.2f",
-        )
-        letter_state = col_d3.selectbox(
-            "State",
-            options=STATES,
-            index=STATES.index(st.session_state.state) if st.session_state.state in STATES else 4,
-        )
-
-        deductions_raw = st.text_area(
-            "Deductions claimed by landlord (one per line — leave blank if none)",
-            height=100,
-            placeholder="$200 carpet cleaning\n$150 paint touch-up\n$75 cleaning fee",
-        )
-
-        submitted = st.form_submit_button(
-            "✉️ Generate Demand Letter",
-            use_container_width=True,
-            type="primary",
-        )
-
-    if submitted:
-        if not tenant_name.strip() or not landlord_name.strip():
-            st.warning("Please fill in at least your name and the landlord's name.")
-        else:
-            deductions = [
-                d.strip() for d in deductions_raw.strip().splitlines() if d.strip()
-            ]
-            params = {
-                "tenant_name": tenant_name.strip(),
-                "tenant_address": tenant_address.strip(),
-                "landlord_name": landlord_name.strip(),
-                "landlord_address": landlord_address.strip(),
-                "property_address": property_address.strip(),
-                "move_out_date": str(move_out_date),
-                "deposit_amount": deposit_amount,
-                "deductions_claimed": deductions,
-                "state": letter_state,
-            }
-            with st.spinner("Drafting your demand letter — this may take 20–30 seconds..."):
-                try:
-                    st.session_state.letter_text = generate_deposit_letter(params)
-                    st.session_state.letter_pdf_path = save_letter_pdf(
-                        st.session_state.letter_text,
-                        filename="deposit_demand_letter.pdf",
-                    )
-                    st.toast("Letter generated!", icon="✉️")
-                except Exception as exc:
-                    st.error(_classify_error(exc))
-                    st.session_state.letter_text = ""
-                    st.session_state.letter_pdf_path = None
-
-    # ── Results ────────────────────────────────────────────────────────────
-    if st.session_state.letter_text:
         st.divider()
-        st.markdown("#### Your demand letter")
-        st.text_area(
-            "letter_output",
-            value=st.session_state.letter_text,
-            height=520,
-            label_visibility="collapsed",
-        )
 
-        pdf_bytes = (
-            pathlib.Path(st.session_state.letter_pdf_path).read_bytes()
-            if st.session_state.letter_pdf_path
-            else None
-        )
-        if pdf_bytes:
-            st.download_button(
-                label="⬇️ Download PDF",
-                data=pdf_bytes,
-                file_name="deposit_demand_letter.pdf",
-                mime="application/pdf",
-                use_container_width=True,
-                type="primary",
+        with st.form("deposit_letter_form"):
+            st.markdown("**Your information**")
+            col_t1, col_t2 = st.columns(2)
+            dl_tenant_name = col_t1.text_input("Your full name", placeholder="Jane Smith", key="dl_tname")
+            dl_tenant_addr = col_t2.text_area(
+                "Your current mailing address", height=88, key="dl_taddr",
+                placeholder="456 Oak Ave, Apt 2\nSan Francisco, CA 94102",
             )
 
-        st.divider()
-        st.caption(
-            "⚖️ This letter is AI-generated and cites your state's tenant protection statutes. "
-            "Review it carefully and consult a licensed tenant rights attorney before sending."
+            st.markdown("**Landlord information**")
+            col_l1, col_l2 = st.columns(2)
+            dl_ll_name = col_l1.text_input("Landlord / property manager name", placeholder="Pacific Properties LLC", key="dl_llname")
+            dl_ll_addr = col_l2.text_area("Landlord mailing address", height=88, key="dl_lladdr",
+                placeholder="789 Market St, Suite 100\nSan Francisco, CA 94103",
+            )
+
+            st.markdown("**Rental details**")
+            dl_prop_addr = st.text_input("Rental property address", key="dl_propaddr",
+                placeholder="123 Main St, Apt 4B, San Francisco, CA 94101",
+            )
+            col_d1, col_d2, col_d3 = st.columns(3)
+            dl_move_out = col_d1.date_input("Move-out date", value=_date.today() - _td(days=30), key="dl_moveout")
+            dl_deposit = col_d2.number_input("Security deposit ($)", min_value=0.0, step=50.0, format="%.2f", key="dl_deposit")
+            dl_state = col_d3.selectbox("State", options=STATES,
+                index=STATES.index(st.session_state.state) if st.session_state.state in STATES else 4,
+                key="dl_state",
+            )
+            dl_deductions = st.text_area(
+                "Deductions claimed by landlord (one per line — leave blank if none)",
+                height=90, key="dl_deductions",
+                placeholder="$200 carpet cleaning\n$150 paint touch-up",
+            )
+            dl_submitted = st.form_submit_button("✉️ Generate Demand Letter", use_container_width=True, type="primary")
+
+        if dl_submitted:
+            if not dl_tenant_name.strip() or not dl_ll_name.strip():
+                st.warning("Please fill in at least your name and the landlord's name.")
+            else:
+                params = {
+                    "tenant_name": dl_tenant_name.strip(),
+                    "tenant_address": dl_tenant_addr.strip(),
+                    "landlord_name": dl_ll_name.strip(),
+                    "landlord_address": dl_ll_addr.strip(),
+                    "property_address": dl_prop_addr.strip(),
+                    "move_out_date": str(dl_move_out),
+                    "deposit_amount": dl_deposit,
+                    "deductions_claimed": [d.strip() for d in dl_deductions.splitlines() if d.strip()],
+                    "state": dl_state,
+                }
+                with st.spinner("Drafting your demand letter — this may take 20–30 seconds..."):
+                    try:
+                        st.session_state.letter_text = generate_deposit_letter(params)
+                        st.session_state.letter_pdf_path = save_letter_pdf(
+                            st.session_state.letter_text, filename="deposit_demand_letter.pdf"
+                        )
+                        st.toast("Letter generated!", icon="✉️")
+                    except Exception as exc:
+                        st.error(_classify_error(exc))
+                        st.session_state.letter_text = ""
+                        st.session_state.letter_pdf_path = None
+
+        if st.session_state.letter_text:
+            st.divider()
+            st.markdown("#### Your demand letter")
+            st.text_area("dl_output", value=st.session_state.letter_text, height=480, label_visibility="collapsed")
+            if st.session_state.letter_pdf_path:
+                st.download_button(
+                    "⬇️ Download PDF", type="primary", use_container_width=True,
+                    data=pathlib.Path(st.session_state.letter_pdf_path).read_bytes(),
+                    file_name="deposit_demand_letter.pdf", mime="application/pdf",
+                )
+            st.caption("⚖️ AI-generated. Review carefully and consult a tenant rights attorney before sending.")
+
+    # ── Sub-tab 2: Repair demand notice ──────────────────────────────────────
+
+    with subtab_repair:
+        st.markdown("#### 🔧 Repair Demand Notice")
+        st.markdown(
+            "Send a formal written notice demanding repairs. "
+            "This triggers the statutory deadline and preserves your right to rent withholding or repair-and-deduct."
         )
+
+        hab_law = STATE_HABITABILITY_LAW.get(st.session_state.state, {})
+        if hab_law:
+            with st.container(border=True):
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Repair deadline", f"{hab_law['repair_deadline_days']} days")
+                remedies_short = ", ".join(
+                    r.replace("rent withholding", "Withhold rent")
+                     .replace("repair and deduct", "R&D")
+                     .replace("lease termination", "Terminate")
+                    for r in hab_law["tenant_remedies"]
+                )
+                c2.metric("Your remedies", remedies_short)
+                c3.metric("Can withhold rent?", "Yes" if hab_law["rent_withhold_threshold"] > 0 else "No")
+                st.caption(f"Governing statute: **{hab_law['statute_citation']}**")
+
+        st.divider()
+
+        with st.form("repair_notice_form"):
+            st.markdown("**Your information**")
+            col_rt1, col_rt2 = st.columns(2)
+            rn_tenant_name = col_rt1.text_input("Your full name", placeholder="Jane Smith", key="rn_tname")
+            rn_tenant_addr = col_rt2.text_area("Your current mailing address", height=88, key="rn_taddr",
+                placeholder="456 Oak Ave, Apt 2\nSan Francisco, CA 94102",
+            )
+
+            st.markdown("**Landlord information**")
+            col_rl1, col_rl2 = st.columns(2)
+            rn_ll_name = col_rl1.text_input("Landlord / property manager name", placeholder="Pacific Properties LLC", key="rn_llname")
+            rn_ll_addr = col_rl2.text_area("Landlord mailing address", height=88, key="rn_lladdr",
+                placeholder="789 Market St, Suite 100\nSan Francisco, CA 94103",
+            )
+
+            rn_prop_addr = st.text_input("Rental property address", key="rn_propaddr",
+                placeholder="123 Main St, Apt 4B, San Francisco, CA 94101",
+            )
+
+            col_ri1, col_ri2 = st.columns([2, 1])
+            rn_issue = col_ri1.text_area(
+                "Describe the repair issue in detail",
+                height=110, key="rn_issue",
+                placeholder="The ceiling in the master bedroom has been leaking since a rainstorm on March 15. "
+                            "Water drips onto the floor during rain. I reported this verbally on March 16.",
+            )
+            rn_reported = col_ri2.date_input(
+                "Date you first reported it", value=_date.today() - _td(days=14), key="rn_reported"
+            )
+            rn_state = col_ri2.selectbox("State", options=STATES,
+                index=STATES.index(st.session_state.state) if st.session_state.state in STATES else 4,
+                key="rn_state",
+            )
+
+            rn_submitted = st.form_submit_button("🔧 Generate Repair Notice", use_container_width=True, type="primary")
+
+        if rn_submitted:
+            if not rn_tenant_name.strip() or not rn_ll_name.strip() or not rn_issue.strip():
+                st.warning("Please fill in your name, landlord's name, and a description of the repair issue.")
+            else:
+                rn_params = {
+                    "tenant_name": rn_tenant_name.strip(),
+                    "tenant_address": rn_tenant_addr.strip(),
+                    "landlord_name": rn_ll_name.strip(),
+                    "landlord_address": rn_ll_addr.strip(),
+                    "property_address": rn_prop_addr.strip(),
+                    "issue_description": rn_issue.strip(),
+                    "date_first_reported": str(rn_reported),
+                    "state": rn_state,
+                }
+                with st.spinner("Drafting your repair notice — this may take 20–30 seconds..."):
+                    try:
+                        st.session_state.repair_notice_text = generate_repair_notice(rn_params)
+                        st.session_state.repair_notice_pdf_path = save_letter_pdf(
+                            st.session_state.repair_notice_text, filename="repair_demand_notice.pdf"
+                        )
+                        st.toast("Repair notice generated!", icon="🔧")
+                    except Exception as exc:
+                        st.error(_classify_error(exc))
+                        st.session_state.repair_notice_text = ""
+                        st.session_state.repair_notice_pdf_path = None
+
+        if st.session_state.repair_notice_text:
+            st.divider()
+            st.markdown("#### Your repair notice")
+            st.text_area("rn_output", value=st.session_state.repair_notice_text, height=480, label_visibility="collapsed")
+            if st.session_state.repair_notice_pdf_path:
+                st.download_button(
+                    "⬇️ Download PDF", type="primary", use_container_width=True,
+                    data=pathlib.Path(st.session_state.repair_notice_pdf_path).read_bytes(),
+                    file_name="repair_demand_notice.pdf", mime="application/pdf",
+                )
+            st.info(
+                "📮 **Send this notice via certified mail, return receipt requested.** "
+                "Keep a copy. The statutory repair clock starts on the date of delivery.",
+                icon="📬",
+            )
+
+    # ── Sub-tab 3: Move-out checklist ─────────────────────────────────────────
+
+    with subtab_checklist:
+        st.markdown("#### 📋 Move-Out Condition Checklist")
+        st.markdown(
+            "Generate a room-by-room PDF checklist documenting your unit's condition at move-out. "
+            "Includes your state's **normal wear & tear** definition to protect your deposit."
+        )
+
+        with st.form("checklist_form"):
+            col_c1, col_c2 = st.columns(2)
+            cl_tenant = col_c1.text_input("Your name (optional)", placeholder="Jane Smith", key="cl_tenant")
+            cl_addr = col_c2.text_input("Property address (optional)", key="cl_addr",
+                placeholder="123 Main St, Apt 4B",
+            )
+
+            col_c3, col_c4, col_c5 = st.columns(3)
+            cl_state = col_c3.selectbox("State", options=STATES,
+                index=STATES.index(st.session_state.state) if st.session_state.state in STATES else 4,
+                key="cl_state",
+            )
+            cl_move_in = col_c4.date_input("Move-in date", value=_date.today() - _td(days=365), key="cl_movein")
+            cl_prop_type = col_c5.selectbox("Property type", options=["apartment", "house"], key="cl_proptype")
+
+            cl_submitted = st.form_submit_button("📋 Generate Checklist PDF", use_container_width=True, type="primary")
+
+        if cl_submitted:
+            cl_params = {
+                "state": cl_state,
+                "move_in_date": str(cl_move_in),
+                "property_type": cl_prop_type,
+                "tenant_name": cl_tenant.strip() or None,
+                "property_address": cl_addr.strip() or None,
+            }
+            with st.spinner("Building your checklist PDF..."):
+                try:
+                    st.session_state.checklist_pdf_path = generate_moveout_checklist(cl_params)
+                    st.toast("Checklist ready!", icon="📋")
+                except Exception as exc:
+                    st.error(f"Could not generate checklist: {exc}")
+                    st.session_state.checklist_pdf_path = None
+
+        if st.session_state.checklist_pdf_path:
+            st.success("✓ Your checklist is ready — download it below.")
+            st.download_button(
+                "⬇️ Download Checklist PDF", type="primary", use_container_width=True,
+                data=pathlib.Path(st.session_state.checklist_pdf_path).read_bytes(),
+                file_name="moveout_checklist.pdf", mime="application/pdf",
+            )
+            st.divider()
+            st.markdown(
+                "**Tips for using this checklist:**\n"
+                "- Walk through each room **before** handing over keys\n"
+                "- Take timestamped photos for every item you mark as damaged\n"
+                "- Give your landlord a copy and keep one for yourself\n"
+                "- If your landlord disputes any charge, compare against the normal wear & tear definition"
+            )
+            st.caption("⚖️ This checklist is informational. Consult a tenant rights attorney for disputes.")
