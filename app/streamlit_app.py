@@ -16,6 +16,7 @@ import streamlit as st
 from app.ingest import ingest_lease, ingest_state_law
 from app.chat import ask
 from app.utils import scan_illegal_clauses, get_state
+from app.documents import generate_deposit_letter, save_letter_pdf, STATE_DEPOSIT_LAW
 
 # ---------------------------------------------------------------------------
 # Page config (must be first Streamlit call)
@@ -83,6 +84,8 @@ def _init_state():
         "lease_text": "",
         "scan_results": None,
         "pending_question": None,
+        "letter_text": "",
+        "letter_pdf_path": None,
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -208,10 +211,14 @@ with st.sidebar:
     st.caption(f"Session ID: `{st.session_state.user_id}`")
 
 # ---------------------------------------------------------------------------
-# Main area — two tabs
+# Main area — three tabs
 # ---------------------------------------------------------------------------
 
-tab_chat, tab_scan = st.tabs(["💬 Ask your lease", "🔎 Scan results"])
+tab_chat, tab_scan, tab_letter = st.tabs([
+    "💬 Ask your lease",
+    "🔎 Scan results",
+    "📬 Demand Letter",
+])
 
 # ── Tab 1: Chat ──────────────────────────────────────────────────────────────
 
@@ -363,16 +370,147 @@ with tab_scan:
                 with st.expander("Show lease text"):
                     st.markdown(f"_{finding['clause_text'][:400]}_")
 
-                st.button(
-                    "Generate dispute letter",
-                    key=f"dispute_{i}",
-                    use_container_width=True,
-                    disabled=True,
-                )
-                st.caption("Dispute letter generation coming in Phase 5.")
+                st.caption("➡️ Use the **📬 Demand Letter** tab to generate a deposit demand letter.")
 
         st.divider()
         st.caption(
             "This is an automated scan, not legal advice. "
             "Consult a tenant rights attorney to confirm enforceability in your jurisdiction."
+        )
+
+# ── Tab 3: Demand Letter ──────────────────────────────────────────────────────
+
+with tab_letter:
+    st.markdown("### 📬 Security Deposit Demand Letter")
+    st.markdown(
+        "Generate a formal legal demand letter citing your state's exact statute. "
+        "Fill in your details below, then download the ready-to-send PDF."
+    )
+
+    # Show the state-law summary card for the currently selected state
+    law_info = STATE_DEPOSIT_LAW.get(st.session_state.state, {})
+    if law_info:
+        with st.container(border=True):
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Return deadline", f"{law_info['return_deadline']} days")
+            c2.metric("Max penalty", f"{law_info['penalty']}× deposit")
+            c3.metric("Certified mail?", "Yes" if law_info["certified_mail_required"] else "No")
+            st.caption(f"Governing statute: **{law_info['statute_citation']}**")
+
+    st.divider()
+
+    with st.form("letter_form"):
+        st.markdown("**Your information**")
+        col_t1, col_t2 = st.columns(2)
+        tenant_name = col_t1.text_input("Your full name", placeholder="Jane Smith")
+        tenant_address = col_t2.text_area(
+            "Your current mailing address", height=88,
+            placeholder="456 Oak Ave, Apt 2\nSan Francisco, CA 94102",
+        )
+
+        st.markdown("**Landlord information**")
+        col_l1, col_l2 = st.columns(2)
+        landlord_name = col_l1.text_input("Landlord / property manager name", placeholder="Pacific Properties LLC")
+        landlord_address = col_l2.text_area(
+            "Landlord mailing address", height=88,
+            placeholder="789 Market St, Suite 100\nSan Francisco, CA 94103",
+        )
+
+        st.markdown("**Rental details**")
+        property_address = st.text_input(
+            "Rental property address",
+            placeholder="123 Main St, Apt 4B, San Francisco, CA 94101",
+        )
+
+        col_d1, col_d2, col_d3 = st.columns(3)
+        from datetime import date as _date, timedelta as _td
+        move_out_date = col_d1.date_input(
+            "Move-out date",
+            value=_date.today() - _td(days=30),
+        )
+        deposit_amount = col_d2.number_input(
+            "Security deposit ($)",
+            min_value=0.0,
+            step=50.0,
+            format="%.2f",
+        )
+        letter_state = col_d3.selectbox(
+            "State",
+            options=STATES,
+            index=STATES.index(st.session_state.state) if st.session_state.state in STATES else 4,
+        )
+
+        deductions_raw = st.text_area(
+            "Deductions claimed by landlord (one per line — leave blank if none)",
+            height=100,
+            placeholder="$200 carpet cleaning\n$150 paint touch-up\n$75 cleaning fee",
+        )
+
+        submitted = st.form_submit_button(
+            "✉️ Generate Demand Letter",
+            use_container_width=True,
+            type="primary",
+        )
+
+    if submitted:
+        if not tenant_name.strip() or not landlord_name.strip():
+            st.warning("Please fill in at least your name and the landlord's name.")
+        else:
+            deductions = [
+                d.strip() for d in deductions_raw.strip().splitlines() if d.strip()
+            ]
+            params = {
+                "tenant_name": tenant_name.strip(),
+                "tenant_address": tenant_address.strip(),
+                "landlord_name": landlord_name.strip(),
+                "landlord_address": landlord_address.strip(),
+                "property_address": property_address.strip(),
+                "move_out_date": str(move_out_date),
+                "deposit_amount": deposit_amount,
+                "deductions_claimed": deductions,
+                "state": letter_state,
+            }
+            with st.spinner("Drafting your demand letter — this may take 20–30 seconds..."):
+                try:
+                    st.session_state.letter_text = generate_deposit_letter(params)
+                    st.session_state.letter_pdf_path = save_letter_pdf(
+                        st.session_state.letter_text,
+                        filename="deposit_demand_letter.pdf",
+                    )
+                    st.toast("Letter generated!", icon="✉️")
+                except Exception as exc:
+                    st.error(_classify_error(exc))
+                    st.session_state.letter_text = ""
+                    st.session_state.letter_pdf_path = None
+
+    # ── Results ────────────────────────────────────────────────────────────
+    if st.session_state.letter_text:
+        st.divider()
+        st.markdown("#### Your demand letter")
+        st.text_area(
+            "letter_output",
+            value=st.session_state.letter_text,
+            height=520,
+            label_visibility="collapsed",
+        )
+
+        pdf_bytes = (
+            pathlib.Path(st.session_state.letter_pdf_path).read_bytes()
+            if st.session_state.letter_pdf_path
+            else None
+        )
+        if pdf_bytes:
+            st.download_button(
+                label="⬇️ Download PDF",
+                data=pdf_bytes,
+                file_name="deposit_demand_letter.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+                type="primary",
+            )
+
+        st.divider()
+        st.caption(
+            "⚖️ This letter is AI-generated and cites your state's tenant protection statutes. "
+            "Review it carefully and consult a licensed tenant rights attorney before sending."
         )
