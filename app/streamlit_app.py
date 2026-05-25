@@ -146,8 +146,8 @@ def _classify_error(exc: Exception) -> str:
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.markdown("## 🏠 Lease Lens")
-    st.caption("Your private tenant rights assistant — runs entirely on your machine.")
+    st.markdown('<h1 style="font-family: Playfair Display, serif; font-size: 22px; font-weight: 900; color: #F9F9F7; letter-spacing: -0.01em;">🏠 Lease Lens</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="font-family: Inter, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #A3A3A3; margin-top: 0;">Tenant Rights Assistant</p>', unsafe_allow_html=True)
     st.divider()
 
     # State selector
@@ -237,6 +237,99 @@ with st.sidebar:
             st.rerun()
 
     st.caption(f"Session ID: `{st.session_state.user_id}`")
+
+# ---------------------------------------------------------------------------
+# Sidebar redesign
+# ---------------------------------------------------------------------------
+
+st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+[data-testid="stSidebar"] {
+  background-color: #111111 !important;
+  border-right: 1px solid #333333 !important;
+}
+[data-testid="stSidebar"] > div:first-child {
+  padding-top: 24px !important;
+}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] .stMarkdown h1 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  color: #F9F9F7 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: 4px !important;
+}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] .stMarkdown p {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  color: #A3A3A3 !important;
+  line-height: 1.5 !important;
+}
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stFileUploader label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+  color: #A3A3A3 !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] {
+  border: 1px solid #404040 !important;
+  border-radius: 0 !important;
+  background: #1a1a1a !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] * {
+  color: #F9F9F7 !important;
+  font-family: 'Inter', sans-serif !important;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] {
+  border: 1px solid #404040 !important;
+  border-radius: 0 !important;
+  background: #1a1a1a !important;
+}
+[data-testid="stSidebar"] [data-testid="stFileUploader"] * {
+  color: #F9F9F7 !important;
+}
+[data-testid="stSidebar"] .stButton button {
+  border: 1px solid #F9F9F7 !important;
+  background: transparent !important;
+  color: #F9F9F7 !important;
+  border-radius: 0 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  transition: all 0.2s !important;
+}
+[data-testid="stSidebar"] .stButton button:hover {
+  background: #F9F9F7 !important;
+  color: #111111 !important;
+}
+[data-testid="stSidebar"] hr {
+  border-color: #333333 !important;
+}
+[data-testid="stSidebar"] code {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  color: #525252 !important;
+  background: transparent !important;
+}
+[data-testid="stSidebar"]::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: #CC0000;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Page background
