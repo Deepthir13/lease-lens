@@ -239,6 +239,59 @@ with st.sidebar:
     st.caption(f"Session ID: `{st.session_state.user_id}`")
 
 # ---------------------------------------------------------------------------
+# Page background
+# ---------------------------------------------------------------------------
+
+st.markdown("""
+<style>
+.stApp { background: #F9F9F7 !important; }
+body   { background: #F9F9F7 !important; }
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------
+# Newspaper masthead
+# ---------------------------------------------------------------------------
+
+st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<div style="
+    background:#F9F9F7;
+    padding: 18px 0 12px 0;
+    margin-bottom: 8px;
+">
+    <div style="border-top: 4px solid #111111; margin-bottom: 10px;"></div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <span style="
+            font-family:'Playfair Display',serif;
+            font-weight:900;
+            font-size:clamp(36px,7vw,72px);
+            letter-spacing:-0.02em;
+            color:#111111;
+            line-height:1;
+        ">LEASE LENS</span>
+        <span style="
+            font-family:'JetBrains Mono',monospace;
+            font-size:12px;
+            color:#737373;
+            padding-bottom:6px;
+        ">VOL. 1.0</span>
+    </div>
+    <div style="
+        font-family:'Inter',sans-serif;
+        font-size:11px;
+        font-weight:600;
+        text-transform:uppercase;
+        letter-spacing:0.35em;
+        color:#737373;
+        margin-top:8px;
+        margin-bottom:10px;
+    ">Tenant Rights Intelligence System</div>
+    <div style="border-top: 1px solid #111111;"></div>
+</div>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------------
 # Main area — three tabs
 # ---------------------------------------------------------------------------
 
