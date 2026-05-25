@@ -340,23 +340,80 @@ st.markdown("""
 .stApp { background: #F9F9F7 !important; }
 body   { background: #F9F9F7 !important; }
 
-/* Force all text to dark on the cream background */
-.stApp, .stApp p, .stApp li, .stApp label,
-.stApp .stMarkdown, .stApp .stMarkdown p,
-.stApp h1, .stApp h2, .stApp h3, .stApp h4,
-[data-testid="stMarkdownContainer"],
-[data-testid="stMarkdownContainer"] p,
-[data-testid="stMarkdownContainer"] li,
-[data-testid="stMarkdownContainer"] h1,
-[data-testid="stMarkdownContainer"] h2,
+/* ── Headings ──────────────────────────────────────────────── */
+.main-content h1,
+[data-testid="stMarkdownContainer"] h1 {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 36px !important;
+    font-weight: 900 !important;
+    color: #111111 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.05 !important;
+}
+[data-testid="stMarkdownContainer"] h2 {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: #111111 !important;
+}
 [data-testid="stMarkdownContainer"] h3 {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
     color: #111111 !important;
 }
 
-/* Tab labels */
-.stTabs [data-baseweb="tab"] { color: #111111 !important; }
+/* ── Body text ─────────────────────────────────────────────── */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+.stApp p, .stApp li {
+    font-family: 'Lora', serif !important;
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    color: #111111 !important;
+}
 
-/* Sidebar text stays readable */
+/* ── Labels / small caps ───────────────────────────────────── */
+[data-testid="stMarkdownContainer"] label,
+.stApp label {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15em !important;
+    color: #737373 !important;
+}
+
+/* ── Code / monospace ──────────────────────────────────────── */
+code, .stApp code,
+[data-testid="stMarkdownContainer"] code {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+}
+
+/* ── Chat messages ─────────────────────────────────────────── */
+[data-testid="stChatMessage"] p {
+    font-family: 'Lora', serif !important;
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+    color: #111111 !important;
+}
+
+/* ── Source citations (italic Lora) ────────────────────────── */
+[data-testid="stExpander"] em,
+[data-testid="stExpander"] p em {
+    font-family: 'Lora', serif !important;
+    font-style: italic !important;
+    font-size: 13px !important;
+    color: #525252 !important;
+}
+
+/* ── Tab labels ────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab"] {
+    font-family: 'Inter', sans-serif !important;
+    color: #111111 !important;
+}
+
+/* ── Sidebar: preserve its own colour scheme ───────────────── */
 [data-testid="stSidebar"] * { color: inherit; }
 </style>
 """, unsafe_allow_html=True)
@@ -366,7 +423,7 @@ body   { background: #F9F9F7 !important; }
 # ---------------------------------------------------------------------------
 
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <div style="
     background:#F9F9F7;
     padding: 18px 0 12px 0;
@@ -417,19 +474,32 @@ tab_chat, tab_scan, tab_docs = st.tabs([
 
 with tab_chat:
     if not st.session_state.lease_loaded:
-        st.markdown("### Welcome to Lease Lens 👋")
+        st.markdown(
+            '<h3 style="font-family:\'Playfair Display\',serif;font-size:18px;'
+            'font-weight:700;color:#111111;margin-bottom:8px;">Welcome to Lease Lens 👋</h3>',
+            unsafe_allow_html=True,
+        )
         st.markdown(
             "Upload your lease PDF in the sidebar to get started. "
             "Once uploaded, you can ask plain-English questions about your rights and obligations."
         )
-        st.markdown("**What Lease Lens can help with:**")
         st.markdown(
-            "- Understanding your security deposit rights\n"
-            "- Knowing when your landlord can (and can't) enter\n"
-            "- Figuring out who's responsible for repairs\n"
-            "- Checking if any lease clauses may be unenforceable\n"
-            "- Understanding notice requirements for moving out"
+            '<p style="font-family:\'Inter\',sans-serif;font-size:11px;text-transform:uppercase;'
+            'letter-spacing:0.15em;color:#737373;margin-top:20px;margin-bottom:8px;">'
+            'What Lease Lens can help with</p>',
+            unsafe_allow_html=True,
         )
+        st.markdown("""
+<div style="border-left:3px solid #111111;padding-left:16px;margin-left:0;">
+<p style="font-family:'Lora',serif;font-size:15px;line-height:2;color:#111111;margin:0;">
+— Understanding your security deposit rights<br>
+— Knowing when your landlord can (and can't) enter<br>
+— Figuring out who's responsible for repairs<br>
+— Checking if any lease clauses may be unenforceable<br>
+— Understanding notice requirements for moving out
+</p>
+</div>
+""", unsafe_allow_html=True)
 
     else:
         # Starter question pills (only before any conversation)
