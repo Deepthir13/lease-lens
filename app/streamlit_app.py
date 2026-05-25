@@ -246,6 +246,25 @@ st.markdown("""
 <style>
 .stApp { background: #F9F9F7 !important; }
 body   { background: #F9F9F7 !important; }
+
+/* Force all text to dark on the cream background */
+.stApp, .stApp p, .stApp li, .stApp label,
+.stApp .stMarkdown, .stApp .stMarkdown p,
+.stApp h1, .stApp h2, .stApp h3, .stApp h4,
+[data-testid="stMarkdownContainer"],
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+    color: #111111 !important;
+}
+
+/* Tab labels */
+.stTabs [data-baseweb="tab"] { color: #111111 !important; }
+
+/* Sidebar text stays readable */
+[data-testid="stSidebar"] * { color: inherit; }
 </style>
 """, unsafe_allow_html=True)
 
