@@ -2,8 +2,9 @@
 conftest.py — CI-friendly fixtures for Lease Lens tests.
 
 Mocks out external services so the full test suite runs without:
-  - A live Ollama server (ollama.chat → canned answer)
-  - Network access  (requests.get → stub statute text)
+  - A live Ollama server     (ollama.chat → canned answer)
+  - Network access           (requests.get → stub statute text)
+  - Cross-encoder download   (_get_cross_encoder → all chunks score as relevant)
 """
 
 import pytest
@@ -67,4 +68,21 @@ def _mock_http():
     mock_resp.raise_for_status = MagicMock()
     mock_resp.status_code = 200
     with patch("requests.get", return_value=mock_resp):
+        yield
+
+
+@pytest.fixture(autouse=True)
+def _mock_cross_encoder():
+    """
+    Prevent cross-encoder model download in tests.
+
+    Returns a score of 3.0 (sigmoid ≈ 0.95) for every chunk so all
+    retrieved chunks pass the relevance threshold — test intent is to
+    verify retrieval structure, not reranker behaviour.
+    """
+    mock_encoder = MagicMock()
+    # predict() receives a list of (query, passage) pairs; return one high score per pair
+    mock_encoder.predict.side_effect = lambda pairs, **kw: [3.0] * len(pairs)
+
+    with patch("app.rag._get_cross_encoder", return_value=mock_encoder):
         yield
