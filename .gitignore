@@ -40,3 +40,7 @@ Thumbs.db
 
 # ── Generated test artefacts ──────────────────────────────────────────────────
 test_*.pdf
+
+# ── Local-only files (not for git) ────────────────────────────────────────────
+.claude/
+HANDOFF.md
