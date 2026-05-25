@@ -13,6 +13,7 @@ State law:
   - ingest_all_states() loops all 50 states with a 2s delay
 """
 
+import hashlib
 import os
 import pathlib
 import tempfile
@@ -163,21 +164,45 @@ def _chunk_pages(pages: list[dict], filename: str) -> list[Document]:
     return nodes
 
 
-def _get_collection(user_id: str) -> chromadb.Collection:
-    """Return (or create) the ChromaDB collection for this user."""
+def _get_collection(user_id: str, fresh: bool = False) -> chromadb.Collection:
+    """Return (or create) the ChromaDB collection for this user.
+
+    Args:
+        user_id: Namespaces the collection.
+        fresh:   If True, delete any existing collection first so re-uploads
+                 start from a clean state (no stale duplicates).
+    """
     db_path = pathlib.Path(__file__).parent.parent / "vectorstore"
     db_path.mkdir(exist_ok=True)
     client = chromadb.PersistentClient(path=str(db_path))
-    return client.get_or_create_collection(f"lease_{user_id}")
+    name = f"lease_{user_id}"
+    if fresh:
+        try:
+            client.delete_collection(name)
+        except Exception:
+            pass
+    return client.get_or_create_collection(name)
 
 
 def _upsert_nodes(collection: chromadb.Collection, nodes, filename: str) -> int:
-    """Upsert LlamaIndex nodes into ChromaDB. Returns the number of chunks added."""
+    """Upsert LlamaIndex nodes into ChromaDB. Returns the number of chunks added.
+
+    Chunk IDs are derived from a hash of the text content so the same clause
+    always maps to the same ID regardless of the upload filename. This prevents
+    duplicate entries when a lease is re-uploaded.
+    """
     ids, documents, metadatas = [], [], []
-    for i, node in enumerate(nodes):
-        chunk_id = f"{filename}::chunk::{i}"
+    seen_ids: set[str] = set()
+
+    for node in nodes:
+        text = node.get_content()
+        # Content-hash ID — same text → same ID → upsert is idempotent
+        chunk_id = "chunk::" + hashlib.md5(text.encode()).hexdigest()[:20]
+        if chunk_id in seen_ids:
+            continue  # deduplicate within the current batch too
+        seen_ids.add(chunk_id)
         ids.append(chunk_id)
-        documents.append(node.get_content())
+        documents.append(text)
         metadatas.append(node.metadata)
 
     if ids:
@@ -211,7 +236,8 @@ def ingest_lease(pdf_path: str, user_id: str = "default") -> int:
     nodes = _chunk_pages(pages, filename)
     print(f"[ingest] Split into {len(nodes)} chunk(s)")
 
-    collection = _get_collection(user_id)
+    # fresh=True wipes any previous upload for this user so we start clean
+    collection = _get_collection(user_id, fresh=True)
     count = _upsert_nodes(collection, nodes, filename)
     print(f"[ingest] Upserted {count} chunk(s) → collection 'lease_{user_id}'")
 

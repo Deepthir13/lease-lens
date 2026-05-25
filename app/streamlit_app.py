@@ -8,6 +8,7 @@ Run with:
 import pathlib
 import tempfile
 import uuid
+from typing import Any
 
 import chromadb
 import fitz
@@ -103,6 +104,23 @@ def _init_state():
 
 
 _init_state()
+
+# ---------------------------------------------------------------------------
+# Source deduplication helper
+# ---------------------------------------------------------------------------
+
+def _dedup_sources(sources: list[dict[str, Any]], text_key: str = "text") -> list[dict[str, Any]]:
+    """Return a deduplicated list of source dicts, keeping the first occurrence of each unique text."""
+    seen: set[str] = set()
+    unique: list[dict[str, Any]] = []
+    for s in sources:
+        # Use first 150 normalised chars as a fingerprint
+        fp = " ".join(s.get(text_key, "").lower().split())[:150]
+        if fp and fp not in seen:
+            seen.add(fp)
+            unique.append(s)
+    return unique
+
 
 # ---------------------------------------------------------------------------
 # Error classifier
@@ -264,17 +282,19 @@ with tab_chat:
                 st.markdown(msg["content"])
                 if msg["role"] == "assistant" and msg.get("sources"):
                     sources = msg["sources"]
-                    if sources.get("lease") or sources.get("law"):
+                    lease_srcs = _dedup_sources(sources.get("lease") or [])
+                    law_srcs = _dedup_sources(sources.get("law") or [])
+                    if lease_srcs or law_srcs:
                         with st.expander("Sources"):
-                            if sources.get("lease"):
+                            if lease_srcs:
                                 st.markdown("**From your lease:**")
-                                for s in sources["lease"]:
+                                for s in lease_srcs:
                                     st.markdown(f"- Page {s['page']}: _{s['text'][:120]}..._")
-                            if sources.get("law"):
-                                st.markdown(
-                                    f"**From {st.session_state.state} state law:**"
-                                )
-                                for s in sources["law"]:
+                            else:
+                                st.markdown("_Your lease did not contain a directly relevant section for this question._")
+                            if law_srcs:
+                                st.markdown(f"**From {st.session_state.state} state law:**")
+                                for s in law_srcs:
                                     st.markdown(f"- _{s['text'][:120]}..._")
 
         # Resolve prompt: pending starter click takes priority over chat input
@@ -313,18 +333,27 @@ with tab_chat:
                         sources = {}
 
                 st.markdown(answer)
-                if sources.get("lease") or sources.get("law"):
-                    with st.expander("Sources"):
-                        if sources.get("lease"):
-                            st.markdown("**From your lease:**")
-                            for s in sources["lease"]:
-                                st.markdown(f"- Page {s['page']}: _{s['text'][:120]}..._")
-                        if sources.get("law"):
-                            st.markdown(
-                                f"**From {st.session_state.state} state law:**"
-                            )
-                            for s in sources["law"]:
-                                st.markdown(f"- _{s['text'][:120]}..._")
+                lease_srcs = _dedup_sources(sources.get("lease") or [])
+                law_srcs = _dedup_sources(sources.get("law") or [])
+                with st.expander("Sources"):
+                    if lease_srcs:
+                        st.markdown("**From your lease:**")
+                        for s in lease_srcs:
+                            st.markdown(f"- Page {s['page']}: _{s['text'][:120]}..._")
+                    else:
+                        st.markdown(
+                            "_Your lease did not contain a directly relevant section "
+                            "for this question._"
+                        )
+                    if law_srcs:
+                        st.markdown(f"**From {st.session_state.state} state law:**")
+                        for s in law_srcs:
+                            st.markdown(f"- _{s['text'][:120]}..._")
+                    elif not lease_srcs:
+                        st.markdown(
+                            "_No matching state law sections found either. "
+                            "Consider contacting your landlord in writing or a tenant rights attorney._"
+                        )
 
             st.session_state.messages.append({
                 "role": "assistant",
