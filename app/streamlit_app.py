@@ -244,6 +244,32 @@ with st.sidebar:
 
 def inject_newsprint_css():
     return """
+    /* ── SECONDARY BACKGROUND OVERRIDE (config.toml sets #111111 for sidebar,
+          restore light for non-sidebar secondary elements) ── */
+    .stExpander,
+    [data-testid="stExpander"],
+    [data-testid="stForm"],
+    [data-testid="stVerticalBlock"] [data-testid="stHorizontalBlock"],
+    .stTextArea textarea,
+    .stTextInput input,
+    .stNumberInput input,
+    .stDateInput input,
+    [data-baseweb="input"],
+    [data-baseweb="textarea"] {
+        background-color: #F9F9F7 !important;
+        color: #111111 !important;
+    }
+    /* Sidebar text: override config.toml's textColor which affects ALL text */
+    [data-testid="stSidebar"] * {
+        color: #F9F9F7 !important;
+    }
+    [data-testid="stSidebar"] label {
+        color: #A3A3A3 !important;
+    }
+    [data-testid="stSidebar"] code {
+        color: #525252 !important;
+    }
+
     /* ── GLOBAL BACKGROUND ── */
     .stApp, .main, .block-container {
         background-color: #F9F9F7 !important;
@@ -253,7 +279,7 @@ def inject_newsprint_css():
         background: transparent !important;
         border-bottom: none !important;
     }
-    .stAppHeader, [data-testid="stAppViewContainer"] > section:first-child {
+    .stAppHeader {
         background: transparent !important;
     }
 
