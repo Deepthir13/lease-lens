@@ -289,8 +289,8 @@ def inject_newsprint_css():
         border-bottom: 1px solid #111111;
         padding: 20px 0 14px;
         margin-bottom: 24px;
-        display: flex;
-        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
     }
     .masthead-row {
         display: flex;
@@ -462,6 +462,36 @@ def inject_newsprint_css():
         color: #737373 !important;
     }
 
+    /* ── SIDEBAR TOGGLE BUTTON ── */
+    [data-testid="collapsedControl"],
+    button[kind="header"],
+    [data-testid="stSidebarCollapsedControl"] {
+        background-color: #111111 !important;
+        border: 1px solid #444444 !important;
+        color: #F9F9F7 !important;
+    }
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stSidebarCollapsedControl"] svg {
+        fill: #F9F9F7 !important;
+        stroke: #F9F9F7 !important;
+    }
+    [data-testid="stSidebarCollapsedControl"] {
+        background-color: #111111 !important;
+        border-right: 1px solid #333333 !important;
+        border-bottom: 1px solid #333333 !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .stSidebar button svg path,
+    [data-testid="collapsedControl"] svg path {
+        stroke: #F9F9F7 !important;
+        fill: none !important;
+    }
+    [data-testid="stSidebarCollapsedControl"]:hover {
+        background-color: #CC0000 !important;
+        border-color: #CC0000 !important;
+    }
+
     /* ── SIDEBAR ── */
     [data-testid="stSidebar"] {
         background-color: #111111 !important;
@@ -534,9 +564,9 @@ st.markdown("""
 # ---------------------------------------------------------------------------
 
 tab_chat, tab_scan, tab_docs = st.tabs([
-    "💬 Ask your lease",
-    "🔎 Scan results",
-    "📄 Documents",
+    "Ask your lease",
+    "Scan results",
+    "Documents",
 ])
 
 # ── Tab 1: Chat ──────────────────────────────────────────────────────────────
@@ -545,12 +575,9 @@ with tab_chat:
     if not st.session_state.lease_loaded:
         st.markdown("""
 <span style="display:inline-block;background:#111111;color:#F9F9F7;font-family:'Inter',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;padding:4px 10px;border-radius:0;margin-bottom:12px;">01. Get Started</span>
-<h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#111111;margin-top:4px;margin-bottom:8px;">Welcome to Lease Lens 👋</h3>
+<div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#111111;margin-top:4px;margin-bottom:10px;line-height:1.2;">Welcome to Lease Lens 👋</div>
+<p style="font-family:'Lora',serif;font-size:15px;line-height:1.75;color:#111111;margin-bottom:20px;">Upload your lease PDF in the sidebar to get started. Once uploaded, you can ask plain-English questions about your rights and obligations.</p>
 """, unsafe_allow_html=True)
-        st.markdown(
-            "Upload your lease PDF in the sidebar to get started. "
-            "Once uploaded, you can ask plain-English questions about your rights and obligations."
-        )
         st.markdown("""
 <div style="margin-top:20px;border-left:3px solid #111111;padding-left:16px;margin-left:0;">
 <p style="font-family:'Inter',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:#737373;margin:0 0 10px 0;">What Lease Lens can help with</p>
