@@ -462,34 +462,11 @@ def inject_newsprint_css():
         color: #737373 !important;
     }
 
-    /* ── SIDEBAR TOGGLE BUTTON ── */
+    /* ── SIDEBAR TOGGLE BUTTON (hidden) ── */
     [data-testid="collapsedControl"],
-    button[kind="header"],
-    [data-testid="stSidebarCollapsedControl"] {
-        background-color: #111111 !important;
-        border: 1px solid #444444 !important;
-        color: #F9F9F7 !important;
-    }
-    [data-testid="collapsedControl"] svg,
-    [data-testid="stSidebarCollapsedControl"] svg {
-        fill: #F9F9F7 !important;
-        stroke: #F9F9F7 !important;
-    }
-    [data-testid="stSidebarCollapsedControl"] {
-        background-color: #111111 !important;
-        border-right: 1px solid #333333 !important;
-        border-bottom: 1px solid #333333 !important;
-        width: 40px !important;
-        height: 40px !important;
-    }
-    .stSidebar button svg path,
-    [data-testid="collapsedControl"] svg path {
-        stroke: #F9F9F7 !important;
-        fill: none !important;
-    }
-    [data-testid="stSidebarCollapsedControl"]:hover {
-        background-color: #CC0000 !important;
-        border-color: #CC0000 !important;
+    [data-testid="stSidebarCollapsedControl"],
+    button[kind="header"] {
+        display: none !important;
     }
 
     /* ── SIDEBAR ── */
