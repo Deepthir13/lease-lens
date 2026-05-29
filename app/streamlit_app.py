@@ -146,8 +146,8 @@ def _classify_error(exc: Exception) -> str:
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.markdown('<h1 style="font-family: Playfair Display, serif; font-size: 22px; font-weight: 900; color: #F9F9F7; letter-spacing: -0.01em;">🏠 Lease Lens</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="font-family: Inter, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: #A3A3A3; margin-top: 0;">Tenant Rights Assistant</p>', unsafe_allow_html=True)
+    st.markdown("## 🏠 Lease Lens")
+    st.caption("Your private tenant rights assistant — runs entirely on your machine.")
     st.divider()
 
     # State selector
@@ -239,334 +239,32 @@ with st.sidebar:
     st.caption(f"Session ID: `{st.session_state.user_id}`")
 
 # ---------------------------------------------------------------------------
-# Newsprint CSS
-# ---------------------------------------------------------------------------
-
-def inject_newsprint_css():
-    return """
-    /* ── SECONDARY BACKGROUND OVERRIDE (config.toml sets #111111 for sidebar,
-          restore light for non-sidebar secondary elements) ── */
-    .stExpander,
-    [data-testid="stExpander"],
-    [data-testid="stForm"],
-    [data-testid="stVerticalBlock"] [data-testid="stHorizontalBlock"],
-    .stTextArea textarea,
-    .stTextInput input,
-    .stNumberInput input,
-    .stDateInput input,
-    [data-baseweb="input"],
-    [data-baseweb="textarea"] {
-        background-color: #F9F9F7 !important;
-        color: #111111 !important;
-    }
-    /* Sidebar text: override config.toml's textColor which affects ALL text */
-    [data-testid="stSidebar"] * {
-        color: #F9F9F7 !important;
-    }
-    [data-testid="stSidebar"] label {
-        color: #A3A3A3 !important;
-    }
-    [data-testid="stSidebar"] code {
-        color: #525252 !important;
-    }
-
-    /* ── GLOBAL BACKGROUND ── */
-    .stApp, .main, .block-container {
-        background-color: #F9F9F7 !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23111111' fill-opacity='0.04' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E") !important;
-    }
-    header[data-testid="stHeader"] {
-        background: transparent !important;
-        border-bottom: none !important;
-    }
-    .stAppHeader {
-        background: transparent !important;
-    }
-
-    /* ── MASTHEAD ── */
-    .masthead-container {
-        border-top: 4px solid #CC0000;
-        border-bottom: 1px solid #111111;
-        padding: 20px 0 14px;
-        margin-bottom: 24px;
-        width: 100%;
-        max-width: 100%;
-    }
-    .masthead-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-    .masthead-title {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(52px, 9vw, 96px);
-        font-weight: 900;
-        color: #111111;
-        letter-spacing: -0.03em;
-        line-height: 0.95;
-        margin: 0;
-    }
-    .masthead-vol {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 12px;
-        color: #737373;
-        letter-spacing: 0.1em;
-        padding-bottom: 6px;
-    }
-    .masthead-sub {
-        font-family: 'Inter', sans-serif;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.35em;
-        color: #737373;
-        margin-top: 6px;
-    }
-
-    /* ── BODY TYPOGRAPHY ── */
-    .stMarkdown p, .stMarkdown li,
-    [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] li {
-        font-family: 'Lora', serif !important;
-        font-size: 15px !important;
-        line-height: 1.75 !important;
-        color: #111111 !important;
-    }
-    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3,
-    [data-testid="stMarkdownContainer"] h1,
-    [data-testid="stMarkdownContainer"] h2,
-    [data-testid="stMarkdownContainer"] h3 {
-        font-family: 'Playfair Display', serif !important;
-        color: #111111 !important;
-        font-weight: 700 !important;
-    }
-    .stMarkdown h1 { font-size: 32px !important; font-weight: 900 !important; }
-    .stMarkdown h2 { font-size: 22px !important; }
-    .stMarkdown h3 { font-size: 18px !important; }
-
-    /* ── TABS ── */
-    .stTabs [data-baseweb="tab-list"] {
-        background: transparent !important;
-        border-bottom: 1px solid #111111 !important;
-        gap: 0 !important;
-    }
-    .stTabs [data-baseweb="tab"] {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 11px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.15em !important;
-        color: #737373 !important;
-        background: transparent !important;
-        border: none !important;
-        border-bottom: 2px solid transparent !important;
-        padding: 10px 20px !important;
-        border-radius: 0 !important;
-    }
-    .stTabs [aria-selected="true"] {
-        color: #CC0000 !important;
-        border-bottom: 2px solid #CC0000 !important;
-        font-weight: 600 !important;
-    }
-    .stTabs [data-baseweb="tab-highlight"] {
-        background-color: #CC0000 !important;
-        height: 2px !important;
-    }
-    .stTabs [data-baseweb="tab-border"] {
-        background-color: #111111 !important;
-        height: 1px !important;
-    }
-
-    /* ── CHAT MESSAGES ── */
-    [data-testid="stChatMessage"] {
-        border-radius: 0 !important;
-        background: transparent !important;
-    }
-    [data-testid="stChatMessage"][data-role="user"] {
-        border: 1px solid #111111 !important;
-        background: #F9F9F7 !important;
-        padding: 12px 16px !important;
-    }
-    [data-testid="stChatMessage"][data-role="assistant"] {
-        border-left: 4px solid #111111 !important;
-        background: #F5F5F0 !important;
-        padding: 12px 16px !important;
-    }
-    [data-testid="stChatMessage"] p {
-        font-family: 'Lora', serif !important;
-        font-size: 15px !important;
-        color: #111111 !important;
-    }
-
-    /* ── CHAT INPUT ── */
-    .stChatInput textarea,
-    [data-testid="stChatInputTextArea"] {
-        border: none !important;
-        border-bottom: 2px solid #111111 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        font-family: 'Lora', serif !important;
-        font-size: 15px !important;
-        color: #111111 !important;
-        box-shadow: none !important;
-    }
-    .stChatInput {
-        background: transparent !important;
-        border: none !important;
-        border-top: 1px solid #E5E5E0 !important;
-        border-radius: 0 !important;
-    }
-
-    /* ── INFO / HINT BOXES ── */
-    .stInfo, [data-testid="stInfoBox"],
-    div[class*="stAlert"] {
-        border: 1px solid #111111 !important;
-        border-left: 4px solid #111111 !important;
-        border-radius: 0 !important;
-        background: #F5F5F0 !important;
-        color: #111111 !important;
-        font-family: 'Lora', serif !important;
-    }
-    .stInfo p, [data-testid="stInfoBox"] p {
-        color: #111111 !important;
-    }
-
-    /* ── BUTTONS (main area) ── */
-    .main .stButton button,
-    [data-testid="stMainBlockContainer"] .stButton button {
-        border: 1px solid #111111 !important;
-        background: #111111 !important;
-        color: #F9F9F7 !important;
-        border-radius: 0 !important;
-        font-family: 'Inter', sans-serif !important;
-        font-size: 12px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.12em !important;
-        transition: all 0.2s !important;
-        padding: 8px 20px !important;
-    }
-    .main .stButton button:hover {
-        background: #F9F9F7 !important;
-        color: #111111 !important;
-    }
-
-    /* ── EXPANDERS (sources) ── */
-    .stExpander {
-        border: 1px solid #E5E5E0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-    }
-    .stExpander summary {
-        font-family: 'JetBrains Mono', monospace !important;
-        font-size: 11px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.15em !important;
-        color: #737373 !important;
-    }
-
-    /* ── SIDEBAR TOGGLE BUTTON (hidden) ── */
-    [data-testid="collapsedControl"],
-    [data-testid="stSidebarCollapsedControl"],
-    button[kind="header"] {
-        display: none !important;
-    }
-
-    /* ── SIDEBAR ── */
-    [data-testid="stSidebar"] {
-        background-color: #111111 !important;
-        border-right: 1px solid #222222 !important;
-    }
-    [data-testid="stSidebar"] * { color: #F9F9F7 !important; }
-    [data-testid="stSidebar"] label {
-        font-family: 'JetBrains Mono', monospace !important;
-        font-size: 11px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.15em !important;
-        color: #A3A3A3 !important;
-    }
-    [data-testid="stSidebar"] [data-baseweb="select"] {
-        border: 1px solid #404040 !important;
-        border-radius: 0 !important;
-        background: #1a1a1a !important;
-    }
-    [data-testid="stSidebar"] .stFileUploader {
-        border: 1px solid #404040 !important;
-        border-radius: 0 !important;
-        background: #1a1a1a !important;
-        padding: 8px !important;
-    }
-    [data-testid="stSidebar"] .stButton button {
-        border: 1px solid #F9F9F7 !important;
-        background: transparent !important;
-        color: #F9F9F7 !important;
-        border-radius: 0 !important;
-        font-family: 'Inter', sans-serif !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.1em !important;
-        font-size: 12px !important;
-    }
-    [data-testid="stSidebar"] hr { border-color: #333333 !important; }
-    [data-testid="stSidebar"] code {
-        font-family: 'JetBrains Mono', monospace !important;
-        font-size: 11px !important;
-        color: #525252 !important;
-        background: transparent !important;
-    }
-
-    /* ── REMOVE STREAMLIT BRANDING ── */
-    #MainMenu, footer, [data-testid="stToolbar"] { display: none !important; }
-    .viewerBadge_container__1QSob { display: none !important; }
-    """
-
-st.markdown(
-    f'<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">'
-    f"<style>{inject_newsprint_css()}</style>",
-    unsafe_allow_html=True,
-)
-
-# ---------------------------------------------------------------------------
-# Newspaper masthead
-# ---------------------------------------------------------------------------
-
-st.markdown("""
-<div class="masthead-container">
-  <div class="masthead-row">
-    <span class="masthead-title">LEASE LENS</span>
-    <span class="masthead-vol">VOL. 1.0</span>
-  </div>
-  <div class="masthead-sub">Tenant Rights Intelligence System</div>
-</div>
-""", unsafe_allow_html=True)
-
-# ---------------------------------------------------------------------------
 # Main area — three tabs
 # ---------------------------------------------------------------------------
 
 tab_chat, tab_scan, tab_docs = st.tabs([
-    "Ask your lease",
-    "Scan results",
-    "Documents",
+    "💬 Ask your lease",
+    "🔎 Scan results",
+    "📄 Documents",
 ])
 
 # ── Tab 1: Chat ──────────────────────────────────────────────────────────────
 
 with tab_chat:
     if not st.session_state.lease_loaded:
-        st.markdown("""
-<span style="display:inline-block;background:#111111;color:#F9F9F7;font-family:'Inter',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;padding:4px 10px;border-radius:0;margin-bottom:12px;">01. Get Started</span>
-<div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#111111;margin-top:4px;margin-bottom:10px;line-height:1.2;">Welcome to Lease Lens 👋</div>
-<p style="font-family:'Lora',serif;font-size:15px;line-height:1.75;color:#111111;margin-bottom:20px;">Upload your lease PDF in the sidebar to get started. Once uploaded, you can ask plain-English questions about your rights and obligations.</p>
-""", unsafe_allow_html=True)
-        st.markdown("""
-<div style="margin-top:20px;border-left:3px solid #111111;padding-left:16px;margin-left:0;">
-<p style="font-family:'Inter',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:#737373;margin:0 0 10px 0;">What Lease Lens can help with</p>
-<p style="font-family:'Lora',serif;font-size:15px;line-height:2;color:#111111;margin:0;">
-— Understanding your security deposit rights<br>
-— Knowing when your landlord can (and can't) enter<br>
-— Figuring out who's responsible for repairs<br>
-— Checking if any lease clauses may be unenforceable<br>
-— Understanding notice requirements for moving out
-</p>
-</div>
-""", unsafe_allow_html=True)
+        st.markdown("### Welcome to Lease Lens 👋")
+        st.markdown(
+            "Upload your lease PDF in the sidebar to get started. "
+            "Once uploaded, you can ask plain-English questions about your rights and obligations."
+        )
+        st.markdown("**What Lease Lens can help with:**")
+        st.markdown(
+            "- Understanding your security deposit rights\n"
+            "- Knowing when your landlord can (and can't) enter\n"
+            "- Figuring out who's responsible for repairs\n"
+            "- Checking if any lease clauses may be unenforceable\n"
+            "- Understanding notice requirements for moving out"
+        )
 
     else:
         # Starter question pills (only before any conversation)
